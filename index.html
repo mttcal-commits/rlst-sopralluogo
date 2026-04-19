@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>RLST — Verbale Sopralluogo</title>
+<style>
+:root{--bg:#f4f6fa;--sur:#ffffff;--sur2:#eef1f7;--brd:#d0d6e8;--acc:#1a56db;--acc2:#0ea5e9;--dan:#dc2626;--ok:#16a34a;--txt:#0f172a;--txt2:#374151;--txt3:#6b7280;--r:10px;--mono:'Courier New',monospace;--sans:system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+.hdr{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid var(--brd);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--mono);font-size:11px;color:var(--txt2);letter-spacing:.1em;font-weight:600}.logo b{color:var(--acc)}
+.pbar{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--brd)}
+.pfill{height:100%;background:var(--acc);transition:width .4s}
+.snav{display:flex;gap:4px;padding:10px 16px;overflow-x:auto;scrollbar-width:none}
+.snav::-webkit-scrollbar{display:none}
+.sp{flex-shrink:0;font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:5px 10px;border-radius:20px;border:1px solid var(--brd);color:var(--txt3);background:transparent;cursor:pointer;white-space:nowrap;transition:all .2s}
+.sp.act{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+.sp.done{border-color:var(--ok);color:var(--ok)}
+.sec{display:none;padding:14px;animation:fi .2s ease}
+.sec.act{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.stitle{font-family:var(--mono);font-size:11px;letter-spacing:.15em;color:var(--acc);text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--acc);font-weight:700}
+.card{background:var(--sur);border:1px solid var(--brd);border-radius:var(--r);padding:13px;margin-bottom:10px}
+.clabel{font-size:12px;color:var(--txt2);margin-bottom:6px;font-family:var(--mono);letter-spacing:.04em;font-weight:600}
+.req{color:var(--dan)}
+input[type=text],input[type=date],textarea{width:100%;background:var(--sur2);border:1.5px solid var(--brd);border-radius:8px;color:var(--txt);font-family:var(--sans);font-size:15px;padding:10px 12px;outline:none;-webkit-appearance:none;appearance:none}
+input[type=text]:focus,input[type=date]:focus,textarea:focus{border-color:var(--acc2)}
+input[type=date]{color-scheme:dark}
+textarea{resize:vertical;min-height:68px}
+.srow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--brd)}
+.srow:last-child{border-bottom:none}
+.slabel{flex:1;font-size:14px;color:var(--txt);line-height:1.4;font-weight:500}
+.slabel small{display:block;font-size:11px;color:var(--txt3);margin-top:2px;font-family:var(--mono);font-weight:400}
+.sbtns{display:flex;gap:5px;flex-shrink:0}
+.sbtn{width:44px;height:32px;border-radius:6px;border:1.5px solid var(--brd);background:transparent;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--txt2);cursor:pointer;transition:all .15s}
+.sbtn.si.on{background:var(--ok);border-color:var(--ok);color:#111}
+.sbtn.no.on{background:var(--dan);border-color:var(--dan);color:#fff}
+.sbtn.na.on{background:var(--txt3);border-color:var(--txt3);color:#fff}
+.drow{padding:9px 0;border-bottom:1px solid var(--brd)}
+.drow:last-child{border-bottom:none}
+.dname{font-size:13px;color:var(--txt);margin-bottom:3px;font-weight:600}
+.dname small{display:block;font-size:11px;color:var(--txt3);font-family:var(--mono);margin-top:1px}
+.dctrl{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:7px}
+.dctrl input[type=date]{flex:1;min-width:110px;font-size:11px;padding:5px 9px}
+.dscad{font-size:11px;color:var(--acc);font-family:var(--mono);flex-shrink:0;font-weight:700}
+.wgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.witem{background:var(--sur2);border:1px solid var(--brd);border-radius:8px;padding:9px;display:flex;align-items:center;justify-content:space-between}
+.wname{font-size:13px;color:var(--txt);font-weight:500}
+.wtog{width:40px;height:22px;border-radius:11px;background:var(--brd);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.wtog::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--txt3);transition:all .2s}
+.wtog.on{background:var(--ok)}.wtog.on::after{left:21px;background:#fff}
+/* FORMAZIONE TABLE */
+.form-block{margin-bottom:14px;border:1px solid var(--brd);border-radius:8px;overflow:hidden}
+.form-head{background:var(--sur2);padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.form-title{font-size:13px;color:var(--txt);flex:1;font-weight:700}
+.form-title small{display:block;font-size:10px;color:var(--txt3);font-family:var(--mono);font-weight:400;margin-top:2px}
+.form-head-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.dscad-sm{font-size:11px;color:var(--acc);font-family:var(--mono);font-weight:700}
+.form-rows{padding:8px 12px}
+.form-row-item{display:flex;gap:8px;align-items:center;margin-bottom:7px}
+.form-row-item:last-child{margin-bottom:0}
+.form-row-item input[type=text]{flex:1;font-size:12px;padding:6px 9px}
+.form-row-item input[type=date]{width:130px;flex-shrink:0;font-size:11px;padding:6px 9px}
+.form-row-item .del-row{background:transparent;border:none;color:var(--txt3);font-size:16px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0}
+.form-row-item .del-row:active{color:var(--dan)}
+.add-row-btn{background:transparent;border:1px dashed var(--brd);border-radius:6px;color:var(--txt3);font-size:11px;padding:6px 10px;cursor:pointer;width:100%;margin-top:6px;font-family:var(--mono)}
+.add-row-btn:active{background:var(--sur2)}
+.form-sino{margin-bottom:6px}
+/* FOTO */
+.fzone{border:2px dashed var(--brd);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;margin-bottom:12px}
+.fzone:active{border-color:var(--acc2)}
+.fzone .icon{font-size:26px;margin-bottom:5px}
+.fzone p{font-size:13px;color:var(--txt2)}
+.fzone small{font-size:10px;color:var(--txt3);font-family:var(--mono)}
+#fotoInput{display:none}
+.fgal{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.fitem{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:4/3}
+.fitem img{width:100%;height:100%;object-fit:cover}
+.fcap-wrap{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.72);padding:5px}
+.fcap{width:100%;background:transparent;border:none;color:#fff;font-size:11px;outline:none}
+.fdel{position:absolute;top:4px;right:4px;background:var(--dan);border:none;color:#fff;width:22px;height:22px;border-radius:50%;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+/* FIRMA */
+.firma-wrap{background:var(--sur2);border:1px solid var(--brd);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.firma-hdr{padding:9px 13px;font-size:11px;font-family:var(--mono);color:var(--txt2);border-bottom:1px solid var(--brd);display:flex;justify-content:space-between;align-items:center}
+.firma-hdr span{color:var(--txt)}
+canvas.fpad{width:100%;height:150px;display:block;cursor:crosshair;touch-action:none;background:#f8faff;border-top:1px solid var(--brd)}
+.firma-clr{background:transparent;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:var(--mono)}
+.firma-clr:active{color:var(--dan)}
+.nome-wrap{padding:9px 13px;border-top:1px solid var(--brd)}
+.nome-wrap input{font-size:13px}
+/* NAV */
+.nav{display:flex;gap:10px;padding:14px;position:sticky;bottom:0;background:linear-gradient(to top,#f4f6fa 85%,transparent);border-top:1px solid var(--brd)}
+.btn{flex:1;padding:13px;border-radius:10px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.04em;border:none;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--acc);color:#111}
+.btn-s{background:var(--sur2);color:var(--txt2);border:1px solid var(--brd)}
+.btn-d{background:var(--dan);color:#fff;flex:none;padding:13px 18px}
+.btn-ok{background:var(--ok);color:#111}
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(15,25,50,.88);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:1000}
+.overlay.show{display:flex}
+.spin{width:38px;height:38px;border:3px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ovtxt{font-family:var(--mono);font-size:12px;color:var(--txt2)}
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(16px);background:#1a56db;border:1px solid #1a56db;color:#fff;border-radius:8px;padding:9px 16px;font-size:12px;font-family:var(--mono);opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center;z-index:500}
+.modal-ov.show{display:flex}
+.modal-box{background:#fff;border:1px solid var(--brd);border-radius:16px 16px 0 0;padding:22px 18px;width:100%;max-width:480px;box-shadow:0 -4px 24px rgba(0,0,0,.1)}
+.modal-box h3{font-family:var(--mono);color:var(--dan);font-size:13px;margin-bottom:8px}
+.modal-box p{font-size:13px;color:var(--txt2);margin-bottom:18px;line-height:1.5}
+.modal-btns{display:flex;gap:10px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">FILCAMS CGIL — <b>RLST</b></div>
+  <div style="font-family:var(--mono);font-size:10px;color:var(--txt3)" id="sc">1 / 7</div>
+  <div class="pbar"><div class="pfill" id="pb" style="width:14%"></div></div>
+</div>
+
+<div class="snav" id="snav">
+  <button class="sp act" onclick="goTo(0)">1. Anagrafica</button>
+  <button class="sp" onclick="goTo(1)">2. Organigramma</button>
+  <button class="sp" onclick="goTo(2)">3. Documenti</button>
+  <button class="sp" onclick="goTo(3)">4. Emergenze</button>
+  <button class="sp" onclick="goTo(4)">5. Formazione</button>
+  <button class="sp" onclick="goTo(5)">6. Foto & Note</button>
+  <button class="sp" onclick="goTo(6)">7. Firme & PDF</button>
+</div>
+
+<!-- 1. ANAGRAFICA -->
+
+<div class="sec act" id="s0">
+  <div class="stitle">01 — Dati Azienda</div>
+  <div class="card"><div class="clabel">Data sopralluogo <span class="req">*</span></div><input type="date" id="data"></div>
+  <div class="card"><div class="clabel">Azienda <span class="req">*</span></div><input type="text" id="azienda" placeholder="Ragione sociale"></div>
+  <div class="card"><div class="clabel">Sede Legale</div><input type="text" id="sedeLeg" placeholder="Via, CAP, Città"></div>
+  <div class="card"><div class="clabel">Sede Operativa</div><input type="text" id="sedeOp" placeholder="Se diversa dalla legale"></div>
+  <div class="card"><div class="clabel">Sede Sopralluogo <span class="req">*</span></div><input type="text" id="sedeSopr" placeholder="Luogo effettivo del sopralluogo"></div>
+  <div class="card"><div class="clabel">RLST — Nome e Cognome</div><input type="text" id="rlstNome" placeholder="Chi firma come RLST"></div>
+  <div class="card"><div class="clabel">Data nomina RLST</div><input type="date" id="rlstData"></div>
+  <div style="height:80px"></div>
+</div>
+
+<!-- 2. ORGANIGRAMMA -->
+
+<div class="sec" id="s1">
+  <div class="stitle">02 — Organigramma Aziendale</div>
+  <div class="card"><div class="clabel">Figure aziendali</div><div id="orgList"></div></div>
+  <div class="card"><div class="clabel">Nr. Lavoratori totali</div><input type="text" id="nrLav" placeholder="es. 12"></div>
+  <div class="card"><div class="clabel">Categorie presenti in azienda</div><div class="wgrid" id="wgrid"></div></div>
+  <div class="card"><div class="clabel">Note organigramma</div><textarea id="noteOrg" placeholder="Osservazioni..."></textarea></div>
+  <div style="height:80px"></div>
+</div>
+
+<!-- 3. DOCUMENTI -->
+
+<div class="sec" id="s2">
+  <div class="stitle">03 — Verifica Documenti</div>
+  <div class="card"><div class="clabel" style="margin-bottom:10px">DVR e valutazioni dei rischi</div><div id="dvrList"></div></div>
+  <div class="card" style="margin-top:10px"><div class="clabel" style="margin-bottom:10px">Altra documentazione</div><div id="altriList"></div></div>
+  <div class="card" style="margin-top:10px"><div class="clabel" style="margin-bottom:10px">Nomine</div><div id="nomineList"></div></div>
+  <div class="card" style="margin-top:10px"><div class="clabel">Note documentazione</div><textarea id="noteDoc" placeholder="Integrazioni, segnalazioni..."></textarea></div>
+  <div style="height:80px"></div>
+</div>
+
+<!-- 4. EMERGENZE -->
+
+<div class="sec" id="s3">
+  <div class="stitle">04 — Gestione Emergenze & Sorveglianza Sanitaria</div>
+  <div class="card"><div class="clabel" style="margin-bottom:10px">Gestione Emergenze</div><div id="emergList"></div></div>
+  <div class="card" style="margin-top:10px"><div class="clabel" style="margin-bottom:10px">Sorveglianza Sanitaria</div><div id="sorvList"></div></div>
+  <div class="card" style="margin-top:10px"><div class="clabel">Note emergenze / sorveglianza</div><textarea id="noteEmerg" placeholder="Osservazioni..."></textarea></div>
+  <div style="height:80px"></div>
+</div>
+
+<!-- 5. FORMAZIONE -->
+
+<div class="sec" id="s4">
+  <div class="stitle">05 — Formazione / Informazione / Addestramento</div>
+  <p style="font-size:11px;color:var(--txt3);font-family:var(--mono);margin-bottom:12px">Artt. 36–37 D.Lgs. 81/2008 — Per ogni voce inserisci i lavoratori con nome e data corso</p>
+  <div id="formContainer"></div>
+  <div class="card" style="margin-top:10px"><div class="clabel">Note formazione</div><textarea id="noteForm" placeholder="Osservazioni..."></textarea></div>
+  <div style="height:80px"></div>
+</div>
+
+<!-- 6. FOTO & NOTE -->
+
+<div class="sec" id="s5">
+  <div class="stitle">06 — Foto & Segnalazioni</div>
+  <div class="fzone" onclick="document.getElementById('fotoInput').click()">
+    <div class="icon">📷</div><p>Aggiungi foto</p><small>Scatta o scegli dalla galleria</small>
+  </div>
+  <input type="file" id="fotoInput" accept="image/*" capture="environment" multiple onchange="addFotos(event)">
+  <div class="fgal" id="fgal"></div>
+  <div class="card" style="margin-top:14px">
+    <div class="clabel" style="display:flex;align-items:center;justify-content:space-between">
+      <span>Segnalazioni — Misure di miglioramento — Annotazioni finali</span>
+      <button onclick="buildCriticita()" style="background:var(--acc);border:none;border-radius:6px;color:#111;font-size:10px;font-weight:700;font-family:var(--mono);padding:4px 10px;cursor:pointer;flex-shrink:0;margin-left:8px">↺ Rigenera</button>
+    </div>
+    <p style="font-size:10px;color:var(--txt3);font-family:var(--mono);margin-bottom:6px;margin-top:4px">I campi con NO vengono aggiunti automaticamente. Puoi modificare il testo.</p>
+    <textarea id="noteFinali" placeholder="Criticità emerse, raccomandazioni, osservazioni conclusive..." style="min-height:140px"></textarea>
+  </div>
+  <div class="card">
+    <div class="clabel">Durante il sopralluogo è stato possibile dialogare coi lavoratori?</div>
+    <div class="srow" style="border:none;padding:0;margin-top:4px">
+      <div class="sbtns">
+        <button class="sbtn si" onclick="setDialogo(this,'SI')">SI</button>
+        <button class="sbtn no" onclick="setDialogo(this,'NO')">NO</button>
+      </div>
+    </div>
+    <textarea id="noteDialogo" placeholder="Note dialogo lavoratori..." style="margin-top:10px;min-height:60px"></textarea>
+  </div>
+  <div style="height:80px"></div>
+</div>
+
+<!-- 7. FIRME -->
+
+<div class="sec" id="s6">
+  <div class="stitle">07 — Firme & Genera PDF</div>
+  <div class="firma-wrap">
+    <div class="firma-hdr"><span>Datore di lavoro / Delegato</span><button class="firma-clr" onclick="clrFirma('DL')">✕ Cancella</button></div>
+    <canvas class="fpad" id="fDL"></canvas>
+    <div class="nome-wrap"><input type="text" id="nomeDL" placeholder="Cognome Nome datore di lavoro"></div>
+  </div>
+  <div class="firma-wrap">
+    <div class="firma-hdr"><span>RLST</span><button class="firma-clr" onclick="clrFirma('RLST')">✕ Cancella</button></div>
+    <canvas class="fpad" id="fRLST"></canvas>
+    <div class="nome-wrap"><input type="text" id="nomeRLST" placeholder="Cognome Nome RLST"></div>
+  </div>
+  <div style="height:100px"></div>
+</div>
+
+<div class="nav">
+  <button class="btn btn-s" id="btnP" onclick="prevStep()" style="display:none">← Indietro</button>
+  <button class="btn btn-p" id="btnN" onclick="nextStep()">Avanti →</button>
+  <button class="btn btn-d" onclick="document.getElementById('mOv').classList.add('show')" title="Nuovo">↺</button>
+</div>
+
+<div class="overlay" id="ov"><div class="spin"></div><div class="ovtxt" id="ovtxt">Generazione PDF...</div></div>
+<div class="toast" id="toast"></div>
+<div class="modal-ov" id="mOv">
+  <div class="modal-box">
+    <h3>⚠ Nuovo sopralluogo</h3>
+    <p>Tutti i dati inseriti verranno cancellati. Sei sicuro?</p>
+    <div class="modal-btns">
+      <button class="btn btn-s" onclick="document.getElementById('mOv').classList.remove('show')">Annulla</button>
+      <button class="btn btn-d" onclick="location.reload()">Sì, cancella tutto</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+const ORG=[
+  {id:'dl',l:'Datore di Lavoro'},{id:'rspp',l:'RSPP',s:'datore di lavoro o esterno'},
+  {id:'aspp',l:'ASPP',s:'non sempre presente'},{id:'rls',l:'RLS / RLST'},
+  {id:'mc',l:'Medico Competente'},{id:'dir',l:'Dirigenti',s:'potere di decisione e spesa autonomo'},
+  {id:'prep',l:'Preposti',s:'nomina scritta necessaria'},
+  {id:'ps',l:'Addetti Primo Soccorso',s:'nomina scritta necessaria'},
+  {id:'anti',l:'Addetti Antincendio',s:'nomina scritta necessaria'},
+];
+const WCAT=['Lavoratrici Madri','Lavoratori Diversamente Abili','Stagisti / Tirocinanti','Lavoratori Stranieri','Lavoratori Minori','Lavoratori Atipici'];
+const DVR=[
+  {id:'dvrGen',l:'DVR Generale',r:'art. 28 D.Lgs. 81/08'},
+  {id:'dvrInc',l:'DVR Incendio',r:'D.Lgs. 81/08, DM 02/09/2021'},
+  {id:'dvrAtex',l:'DVR ATEX',r:'Art. 290 D.Lgs. 81/08'},
+  {id:'dvrMac',l:'DVR Macchine',r:'Art. 71 D.Lgs. 81/08'},
+  {id:'dvrChim',l:'DVR Chimico',r:'Art. 223 D.Lgs. 81/08'},
+  {id:'dvrCanc',l:'DVR Cancerogeno',r:'Art. 236 D.Lgs. 81/08',sc:'3 anni'},
+  {id:'dvrRum',l:'DVR Rumore',r:'Art. 190 D.Lgs. 81/08',sc:'4 anni'},
+  {id:'dvrVib',l:'DVR Vibrazioni',r:'Art. 202 D.Lgs. 81/08',sc:'4 anni'},
+  {id:'dvrRoa',l:'DVR ROA',r:'Art. 216 D.Lgs. 81/08',sc:'4 anni'},
+  {id:'dvrCem',l:'DVR CEM',r:'Art. 209 D.Lgs. 81/08',sc:'4 anni'},
+  {id:'dvrMmc',l:'DVR MMC',r:'Art. 168 D.Lgs. 81/08',sc:'4 anni'},
+  {id:'dvrMadri',l:'DVR Lavoratrici Madri'},
+  {id:'dvrMin',l:'DVR Minori'},
+  {id:'dvrStr',l:'DVR Stress Lavoro-Correlato',r:'art. 28 D.Lgs. 81/08',sc:'2 anni'},
+  {id:'dvrAmia',l:'DVR Esposizione Amianto',r:'art. 249 D.Lgs. 81/08',sc:'3 anni'},
+  {id:'dvrVdt',l:'DVR Videoterminali',r:'art. 174 D.Lgs. 81/08'},
+  {id:'duvri',l:'DUVRI',r:'art. 26 D.Lgs. 81/2008',sc:'A firma contratto',s:'Interferenze aziende esterne: appalti, manutenzioni, pulizie'},
+];
+const ALTRI=[
+  {id:'dpi',l:'Lettera Consegna DPI',sc:'Ad ogni consegna'},
+  {id:'diel',l:'Dichiarazione Conformità Impianto Elettrico'},
+  {id:'manel',l:'Manutenzione Periodica Impianto Elettrico'},
+  {id:'terra',l:'Verifica Periodica Messa a Terra',sc:'5 anni (2 se SCIA VVF)'},
+  {id:'dith',l:'Dichiarazione Conformità Impianto Termico'},
+  {id:'manth',l:'Manutenzione Periodica Impianto Termico'},
+  {id:'clima',l:'Manutenzione Impianto Climatizzazione',sc:'Semestrale'},
+  {id:'legio',l:'Manuale Legionella',s:'Attività ricettive / SPA'},
+  {id:'acqua',l:'Campionamenti Acqua'},
+  {id:'schim',l:'Schede Tecniche Sicurezza Prodotti Chimici'},
+  {id:'haccp',l:'Piano di Autocontrollo HACCP',s:'Bar, ristoranti, alimenti, farmacie...'},
+];
+const NOMINE=[
+  {id:'nRspp',l:'Nomina RSPP'},{id:'nDir',l:'Nomina Dirigente'},
+  {id:'nPrep',l:'Nomina Preposti'},{id:'nPs',l:'Nomina Addetto Primo Soccorso'},
+  {id:'nAnti',l:'Nomina Addetto Prevenzione Incendi'},
+];
+const EMERG=[
+  {id:'estint',l:'Mezzi estinguenti in numero adeguato'},
+  {id:'regA',l:'Registro Antincendio',s:'annotazione controlli'},
+  {id:'fumo',l:'Impianto di rilevazione fumi'},
+  {id:'illE',l:'Illuminazione di emergenza'},
+  {id:'cassPs',l:'Cassetta PS (rif. DM 388/2003)',s:'>3 lav: cassetta / fino a 2 lav: pacchetto medicazione'},
+  {id:'vvf',l:'Attività soggetta DPR 151/2011 VVF'},
+  {id:'addE',l:'Numero adeguato addetti gestione emergenze'},
+  {id:'pianE',l:'Piano di Emergenza',s:'>50 persone'},
+  {id:'plan',l:'Planimetria di Emergenza'},
+];
+const SORV=[
+  {id:'nomMc',l:'Nomina del MC'},{id:'pianoSs',l:'Piano di Sorveglianza Sanitaria'},
+  {id:'cart',l:'Cartelle sanitarie in luogo sicuro sigillate'},
+  {id:'verbMc',l:'Verbale di Sopralluogo MC'},{id:'giud',l:'Giudizio di Idoneità'},
+];
+// Formazione: ogni voce ha una tabella nome+data per ogni lavoratore
+const FORM=[
+  {id:'fRspp',l:'RSPP',sc:'5 anni'},
+  {id:'fDl',l:'Datore di Lavoro',sc:'5 anni'},
+  {id:'fLav',l:'Formazione dei Lavoratori',sc:'5 anni',s:'rischio specifico legato alla mansione'},
+  {id:'fPrep',l:'Formazione Preposti',sc:'2 anni'},
+  {id:'fPs',l:'Formazione Addetto Primo Soccorso',sc:'3 anni'},
+  {id:'fAnti',l:'Formazione Addetto Lotta Antincendio',sc:'5 anni'},
+  {id:'fCarr',l:'Formazione Utilizzo Carrelli Elevatori',sc:'3 anni'},
+  {id:'iLav',l:'Informazione dei Lavoratori',sc:'Una tantum'},
+  {id:'iMin',l:'Informativa Minori'},
+  {id:'iMad',l:'Informativa Lavoratrici Madri'},
+  {id:'cDpi',l:'Lettera Consegna DPI'},
+];
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let step=0, fotos=[], dialogoVal=null;
+const SV={}; // sino/doc values
+const FC={},FD={},FI={}; // firma
+
+// ═══════════════════════════════════════════════════════════
+// BUILD UI
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('data').value=new Date().toISOString().split('T')[0];
+  try{ buildOrg(); }catch(e){console.error('buildOrg',e);}
+  try{ buildWcat(); }catch(e){console.error('buildWcat',e);}
+  try{ buildDvr(); }catch(e){console.error('buildDvr',e);}
+  try{ buildAltri(); }catch(e){console.error('buildAltri',e);}
+  try{ buildNomine(); }catch(e){console.error('buildNomine',e);}
+  try{ buildEmerg(); }catch(e){console.error('buildEmerg',e);}
+  try{ buildSorv(); }catch(e){console.error('buildSorv',e);}
+  try{ buildForm(); }catch(e){console.error('buildForm',e);}
+  // initFirme viene chiamato solo quando si arriva alla sezione firme (lazy)
+});
+
+function buildOrg(){
+  document.getElementById('orgList').innerHTML=ORG.map(f=>
+    `<div class="srow"><div class="slabel">${f.l}${f.s?`<small>${f.s}</small>`:''}</div>
+     <input type="text" id="o_${f.id}" placeholder="Nome cognome" style="width:140px;font-size:12px;padding:5px 8px;flex-shrink:0"></div>`
+  ).join('');
+}
+
+function buildWcat(){
+  document.getElementById('wgrid').innerHTML=WCAT.map(c=>{
+    const id='w_'+c.replace(/\W/g,'_');
+    return `<div class="witem"><div class="wname">${c}</div>
+            <button class="wtog" id="${id}" onclick="this.classList.toggle('on')"></button></div>`;
+  }).join('');
+}
+
+function docRowHTML(it){
+  return `<div class="drow">
+    <div class="dname">${it.l}${it.r?`<small>${it.r}</small>`:''}${it.s?`<small style="color:var(--acc2)">${it.s}</small>`:''}</div>
+    <div class="dctrl">
+      <div class="sbtns">
+        <button class="sbtn si" onclick="sv(this,'${it.id}','SI')">SI</button>
+        <button class="sbtn no" onclick="sv(this,'${it.id}','NO')">NO</button>
+        <button class="sbtn na" onclick="sv(this,'${it.id}','N/A')" style="font-size:9px">N/A</button>
+      </div>
+      <input type="date" id="d_${it.id}" style="flex:1;min-width:110px;font-size:11px;padding:5px 8px">
+      ${it.sc?`<span class="dscad">↺ ${it.sc}</span>`:''}
+    </div></div>`;
+}
+
+function sinoRowHTML(it){
+  return `<div class="srow"><div class="slabel">${it.l}${it.s?`<small>${it.s}</small>`:''}</div>
+    <div class="sbtns">
+      <button class="sbtn si" onclick="sv(this,'${it.id}','SI')">SI</button>
+      <button class="sbtn no" onclick="sv(this,'${it.id}','NO')">NO</button>
+      <button class="sbtn na" onclick="sv(this,'${it.id}','N/A')" style="font-size:9px">N/A</button>
+    </div></div>`;
+}
+
+function buildDvr(){document.getElementById('dvrList').innerHTML=DVR.map(docRowHTML).join('');}
+function buildAltri(){document.getElementById('altriList').innerHTML=ALTRI.map(docRowHTML).join('');}
+function buildNomine(){document.getElementById('nomineList').innerHTML=NOMINE.map(sinoRowHTML).join('');}
+function buildEmerg(){document.getElementById('emergList').innerHTML=EMERG.map(sinoRowHTML).join('');}
+function buildSorv(){document.getElementById('sorvList').innerHTML=SORV.map(sinoRowHTML).join('');}
+
+// FORMAZIONE — tabella con righe nome+data per ogni voce
+function buildForm(){
+  document.getElementById('formContainer').innerHTML=FORM.map(it=>`
+    <div class="form-block" id="fb_${it.id}">
+      <div class="form-head">
+        <div class="form-title">${it.l}${it.s?`<small>${it.s}</small>`:''}</div>
+        <div class="form-head-right">
+          <div class="sbtns form-sino">
+            <button class="sbtn si" onclick="sv(this,'f_${it.id}','SI')">SI</button>
+            <button class="sbtn no" onclick="sv(this,'f_${it.id}','NO')">NO</button>
+            <button class="sbtn na" onclick="sv(this,'f_${it.id}','N/A')" style="font-size:9px">N/A</button>
+          </div>
+          ${it.sc?`<span class="dscad-sm">↺ ${it.sc}</span>`:''}
+        </div>
+      </div>
+      <div class="form-rows" id="fr_${it.id}">
+        <div class="form-row-item">
+          <input type="text" placeholder="Nome lavoratore" data-fid="${it.id}" data-field="nome">
+          <input type="date" data-fid="${it.id}" data-field="data">
+          <button class="del-row" onclick="delFormRow(this)">−</button>
+        </div>
+      </div>
+      <button class="add-row-btn" onclick="addFormRow('${it.id}')">+ Aggiungi lavoratore</button>
+    </div>`
+  ).join('');
+}
+
+function addFormRow(fid){
+  const container=document.getElementById('fr_'+fid);
+  const div=document.createElement('div');
+  div.className='form-row-item';
+  div.innerHTML=`<input type="text" placeholder="Nome lavoratore" data-fid="${fid}" data-field="nome">
+    <input type="date" data-fid="${fid}" data-field="data">
+    <button class="del-row" onclick="delFormRow(this)">−</button>`;
+  container.appendChild(div);
+}
+
+function delFormRow(btn){
+  const rows=btn.closest('.form-rows').querySelectorAll('.form-row-item');
+  if(rows.length>1) btn.closest('.form-row-item').remove();
+}
+
+// ═══════════════════════════════════════════════════════════
+// INTERACTIONS
+// ═══════════════════════════════════════════════════════════
+function sv(btn,id,val){
+  SV[id]=val;
+  btn.closest('.sbtns').querySelectorAll('.sbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function setDialogo(btn,val){
+  dialogoVal=val;
+  btn.closest('.srow').querySelectorAll('.sbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// Legge tutti i dati formazione
+function getFormData(){
+  const out={};
+  FORM.forEach(it=>{
+    const rows=document.querySelectorAll(`#fr_${it.id} .form-row-item`);
+    const entries=[];
+    rows.forEach(row=>{
+      const nome=row.querySelector('[data-field="nome"]').value.trim();
+      const data=row.querySelector('[data-field="data"]').value;
+      if(nome||data) entries.push({nome,data});
+    });
+    out[it.id]={val:SV['f_'+it.id]||'',entries};
+  });
+  return out;
+}
+
+// ═══════════════════════════════════════════════════════════
+// FOTO
+// ═══════════════════════════════════════════════════════════
+function addFotos(e){
+  Array.from(e.target.files).forEach(f=>{
+    const r=new FileReader();
+    r.onload=ev=>{fotos.push({d:ev.target.result,c:''});renderFotos();};
+    r.readAsDataURL(f);
+  });
+  e.target.value='';
+}
+function renderFotos(){
+  document.getElementById('fgal').innerHTML=fotos.map((f,i)=>
+    `<div class="fitem"><img src="${f.d}">
+     <button class="fdel" onclick="fotos.splice(${i},1);renderFotos()">✕</button>
+     <div class="fcap-wrap"><input class="fcap" value="${f.c}" placeholder="Descrivi la zona..." oninput="fotos[${i}].c=this.value"></div>
+     </div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// FIRME
+// ═══════════════════════════════════════════════════════════
+function initFirme(){
+  ['DL','RLST'].forEach(id=>{
+    const canvas=document.getElementById('f'+id);
+    if(!canvas)return;
+    FD[id]=false; FI[id]=null;
+    // Aggiungiamo solo gli event listener — il canvas viene dimensionato
+    // in reinitFirme() quando la sezione è visibile
+    const gp=ev=>{const rc=canvas.getBoundingClientRect(),src=ev.touches?ev.touches[0]:ev;return{x:src.clientX-rc.left,y:src.clientY-rc.top};};
+    canvas.addEventListener('mousedown',ev=>{if(!FC[id])return;FD[id]=true;const p=gp(ev);FC[id].beginPath();FC[id].moveTo(p.x,p.y);});
+    canvas.addEventListener('mousemove',ev=>{if(!FC[id]||!FD[id])return;const p=gp(ev);FC[id].lineTo(p.x,p.y);FC[id].stroke();});
+    canvas.addEventListener('mouseup',()=>{FD[id]=false;if(FC[id])FI[id]=canvas.toDataURL();});
+    canvas.addEventListener('touchstart',ev=>{ev.preventDefault();if(!FC[id])return;FD[id]=true;const p=gp(ev);FC[id].beginPath();FC[id].moveTo(p.x,p.y);},{passive:false});
+    canvas.addEventListener('touchmove',ev=>{ev.preventDefault();if(!FC[id]||!FD[id])return;const p=gp(ev);FC[id].lineTo(p.x,p.y);FC[id].stroke();},{passive:false});
+    canvas.addEventListener('touchend',()=>{FD[id]=false;if(FC[id])FI[id]=canvas.toDataURL();});
+  });
+}
+function clrFirma(id){
+  const canvas=document.getElementById('f'+id);
+  FC[id].clearRect(0,0,canvas.width,canvas.height);
+  FI[id]=null;
+}
+
+function reinitFirme(){
+  ['DL','RLST'].forEach(id=>{
+    const canvas=document.getElementById('f'+id);
+    const prev=FI[id];
+    const r=canvas.getBoundingClientRect();
+    if(r.width<10)return;
+    const newW=Math.round(r.width*devicePixelRatio);
+    const newH=Math.round(r.height*devicePixelRatio);
+    if(canvas.width===newW&&canvas.height===newH){
+      // already correct size, just make sure ctx is set
+      if(!FC[id]){
+        const ctx=canvas.getContext('2d');
+        ctx.strokeStyle='#1a1a2e';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
+        FC[id]=ctx;
+      }
+      return;
+    }
+    canvas.width=newW; canvas.height=newH;
+    const ctx=canvas.getContext('2d');
+    ctx.scale(devicePixelRatio,devicePixelRatio);
+    ctx.strokeStyle='#1a1a2e';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
+    FC[id]=ctx;
+    if(prev){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,r.width,r.height);img.src=prev;}
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// AUTO-CRITICITA': raccoglie tutti i NO e popola noteFinali
+// ═══════════════════════════════════════════════════════════
+function buildCriticita(){
+  const ALL_ITEMS=[
+    {grp:'DVR e Valutazioni dei Rischi', items:DVR},
+    {grp:'Altra Documentazione', items:ALTRI},
+    {grp:'Nomine', items:NOMINE},
+    {grp:'Gestione Emergenze', items:EMERG},
+    {grp:'Sorveglianza Sanitaria', items:SORV},
+  ];
+  const FORM_IDS=FORM.map(it=>({id:'f_'+it.id,l:it.l}));
+  const lines=[];
+  ALL_ITEMS.forEach(function(entry){
+    const nos=entry.items.filter(function(it){return SV[it.id]==='NO';});
+    if(nos.length){
+      lines.push('— '+entry.grp.toUpperCase()+' —');
+      nos.forEach(function(it){lines.push('• '+it.l+' risulta ASSENTE o NON CONFORME');});
+    }
+  });
+  const formNos=FORM_IDS.filter(function(it){return SV[it.id]==='NO';});
+  if(formNos.length){
+    lines.push('— FORMAZIONE / INFORMAZIONE —');
+    formNos.forEach(function(it){lines.push('• '+it.l+' non risulta effettuata o documentata');});
+  }
+  if(lines.length===0)return;
+  const ta=document.getElementById('noteFinali');
+  if(!ta)return;
+  const esistente=ta.value.trim();
+  const sep='\n';
+  const autoTxt='Si segnalano le seguenti criticità rilevate durante il sopralluogo:'+sep+sep+lines.join(sep);
+  if(esistente&&esistente.indexOf('Si segnalano')<0){
+    ta.value=autoTxt+sep+sep+esistente;
+  } else {
+    ta.value=autoTxt;
+  }
+  ta.style.borderColor='var(--acc)';
+  setTimeout(function(){ta.style.borderColor='';},2000);
+}
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function goTo(n){
+  document.getElementById('s'+step).classList.remove('act');
+  document.querySelectorAll('.sp')[step].classList.remove('act');
+  step=n;
+  document.getElementById('s'+step).classList.add('act');
+  const pills=document.querySelectorAll('.sp');
+  pills[step].classList.add('act');
+  pills[step].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  document.getElementById('btnP').style.display=step===0?'none':'flex';
+  const nb=document.getElementById('btnN');
+  nb.textContent=step===6?'⬇ Genera PDF':'Avanti →';
+  nb.className=step===6?'btn btn-ok':'btn btn-p';
+  document.getElementById('sc').textContent=(step+1)+' / 7';
+  document.getElementById('pb').style.width=((step+1)/7*100)+'%';
+  window.scrollTo(0,0);
+  // Quando si arriva a sezione 6 (Foto & Note) genera le criticità
+  if(n===5) setTimeout(buildCriticita,200);
+  // Quando si arriva a sezione 7 (Firme) reinizializza i canvas firma
+  if(n===6) setTimeout(reinitFirme,150);
+}
+function nextStep(){try{if(step===6)generatePDF();else{document.querySelectorAll('.sp')[step].classList.add('done');goTo(step+1);}}catch(e){console.error('nextStep error',e);alert('Errore: '+e.message);}}
+function prevStep(){if(step>0)goTo(step-1);}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+function fmtD(d){if(!d)return'';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+function g(id){return(document.getElementById(id)||{}).value||'';}
+
+// ═══════════════════════════════════════════════════════════
+// PDF GENERATION
+// Renders to Canvas → JPEG → real PDF binary → opens new tab
+// ═══════════════════════════════════════════════════════════
+const PW=794,PH=1123,ML=52,MR=52,MT=68,MB=52,CW=794-52-52;
+const C={bg:'#0f1117',sur:'#181c27',blu:'#1e2335',acc:'#e8c84a',wht:'#e8eaf2',gry:'#8890a8',red:'#ff5a5a',grn:'#4ade80',brd:'#3a4060'};
+
+let _pages,_cv,_cx,_y;
+
+async function generatePDF(){
+  // Apriamo la finestra SUBITO (dentro il gestore click, prima di await)
+  // — i browser mobili bloccano window.open() se chiamato dopo operazioni async
+  const win=window.open('','_blank');
+  if(win){
+    win.document.write('<html><head><title>PDF RLST</title></head><body style="margin:0;background:#0f1117;color:#8890a8;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px"><div style="width:40px;height:40px;border:3px solid #2a3050;border-top-color:#e8c84a;border-radius:50%;animation:s .8s linear infinite"></div><p style="font-size:14px">Generazione PDF in corso...</p><style>@keyframes s{to{transform:rotate(360deg)}}</style></body></html>');
+
+```
+win.document.close();
+```
+
+}
+document.getElementById(‘ov’).classList.add(‘show’);
+document.getElementById(‘ovtxt’).textContent=‘Preparazione…’;
+await tick();
+try{
+const pages=await buildAllPages();
+document.getElementById(‘ovtxt’).textContent=‘Assemblaggio PDF…’;
+await tick();
+const pdfBytes=await assemblePDF(pages);
+document.getElementById(‘ov’).classList.remove(‘show’);
+const blob=new Blob([pdfBytes],{type:‘application/pdf’});
+const url=URL.createObjectURL(blob);
+if(win&&!win.closed){
+win.location.href=url;
+toast(‘PDF pronto — salvalo dalla scheda aperta’);
+} else {
+// Fallback: link verde nella pagina
+const a=document.createElement(‘a’);
+a.href=url;
+const az=g(‘azienda’)||‘Azienda’;
+a.download=‘Sopralluogo_’+az.replace(/\s+/g,’*’)+’*’+(g(‘data’)||‘data’)+’.pdf’;
+a.style.cssText=‘position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#4ade80;color:#111;padding:14px 24px;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;z-index:9999;font-family:monospace;white-space:nowrap’;
+a.textContent=‘⬇ Tocca qui per scaricare il PDF’;
+document.body.appendChild(a);
+setTimeout(()=>a.remove(),20000);
+toast(‘PDF pronto — tocca il bottone verde’);
+}
+}catch(err){
+console.error(err);
+if(win&&!win.closed)win.close();
+document.getElementById(‘ov’).classList.remove(‘show’);
+toast(’Errore: ’+err.message);
+}
+}
+
+function tick(){return new Promise(r=>setTimeout(r,30));}
+
+// ── Canvas page builder ─────────────────────────────────────
+function newPage(){
+const c=document.createElement(‘canvas’);
+c.width=PW; c.height=PH;
+const cx=c.getContext(‘2d’);
+cx.fillStyle=C.bg; cx.fillRect(0,0,PW,PH);
+_cv=c; _cx=cx; _y=MT;
+return c;
+}
+
+function saveAndNewPage(){
+_pages.push(_cv);
+newPage();
+pageHeader();
+}
+
+function pageHeader(){
+_cx.fillStyle=C.acc; _cx.fillRect(0,0,PW,5);
+_cx.font=‘11px Arial’; _cx.fillStyle=C.gry;
+_cx.fillText(‘VERBALE DI SOPRALLUOGO RLST — FILCAMS CGIL’,ML,23);
+_cx.strokeStyle=C.brd; _cx.lineWidth=1;
+ln(ML,29,PW-MR,29);
+_y=MT+10;
+}
+
+function checkY(need){if(_y+need>PH-MB)saveAndNewPage();}
+
+function ln(x1,y1,x2,y2){_cx.beginPath();_cx.moveTo(x1,y1);_cx.lineTo(x2,y2);_cx.stroke();}
+
+function rr(x,y,w,h,r,fill,stroke){
+_cx.beginPath();
+_cx.moveTo(x+r,y);_cx.lineTo(x+w-r,y);_cx.quadraticCurveTo(x+w,y,x+w,y+r);
+_cx.lineTo(x+w,y+h-r);_cx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+_cx.lineTo(x+r,y+h);_cx.quadraticCurveTo(x,y+h,x,y+h-r);
+_cx.lineTo(x,y+r);_cx.quadraticCurveTo(x,y,x+r,y);
+_cx.closePath();
+if(fill){_cx.fillStyle=fill;_cx.fill();}
+if(stroke){_cx.strokeStyle=stroke;_cx.stroke();}
+}
+
+function wrap(text,font,maxW){
+if(!text)return[’’];
+_cx.font=font;
+const words=String(text).split(’ ‘);
+const lines=[];let cur=’’;
+for(const w of words){
+const t=cur?cur+’ ‘+w:w;
+if(_cx.measureText(t).width>maxW&&cur){lines.push(cur);cur=w;}else cur=t;
+}
+if(cur)lines.push(cur);
+return lines.length?lines:[’’];
+}
+
+function secHead(title){
+checkY(34);
+rr(ML,_y,CW,26,4,C.blu,null);
+_cx.font=‘bold 11px Arial’; _cx.fillStyle=C.acc;
+_cx.fillText(title.toUpperCase(),ML+12,_y+17);
+_y+=34;
+}
+
+function badge(val,x,y2){
+if(!val||val===’-’)return;
+const col=val===‘SI’?C.grn:val===‘NO’?C.red:C.gry;
+rr(x,y2,54,18,4,col,null);
+_cx.font=‘bold 10px Arial’; _cx.textAlign=‘center’;
+_cx.fillStyle=val===‘NO’?’#fff’:’#111’;
+_cx.fillText(val,x+27,y2+13); _cx.textAlign=‘left’;
+}
+
+function sinoRow(label,val,sub){
+const full=label+(sub?’ (’+sub+’)’:’’);
+const lines=wrap(full,‘12px Arial’,CW-70);
+const rh=lines.length*17+14; checkY(rh);
+_cx.font=‘12px Arial’; _cx.fillStyle=C.wht;
+lines.forEach((l,i)=>_cx.fillText(l,ML,_y+14+i*17));
+badge(val,PW-MR-54,_y+2);
+_cx.strokeStyle=C.brd; _cx.lineWidth=0.5; ln(ML,_y+rh-2,PW-MR,_y+rh-2);
+_y+=rh;
+}
+
+function docRow(label,ref,val,dateVal,scad,sub){
+const ll=wrap(label,‘bold 12px Arial’,CW-70);
+const rl=ref?wrap(ref,‘10px Arial’,CW-70):[];
+const sl=sub?wrap(sub,‘italic 10px Arial’,CW-120):[];
+const rh=ll.length*16+(rl.length?rl.length*13:0)+(sl.length?sl.length*13:0)+22;
+checkY(rh);
+_cx.font=‘bold 12px Arial’; _cx.fillStyle=C.wht;
+ll.forEach((l,i)=>_cx.fillText(l,ML,_y+14+i*16));
+let dy=ll.length*16;
+if(rl.length){_cx.font=‘10px Arial’;_cx.fillStyle=C.gry;rl.forEach((l,i)=>_cx.fillText(l,ML,_y+dy+12+i*13));dy+=rl.length*13;}
+if(sl.length){_cx.font=‘italic 10px Arial’;_cx.fillStyle=’#4a9eff’;sl.forEach((l,i)=>_cx.fillText(l,ML,_y+dy+12+i*13));dy+=sl.length*13;}
+badge(val,PW-MR-54,_y+2);
+if(dateVal){_cx.font=‘10px Arial’;_cx.fillStyle=C.gry;_cx.fillText(’Data: ’+dateVal,PW-MR-170,_y+13);}
+if(scad){_cx.font=‘10px Arial’;_cx.fillStyle=C.acc;_cx.fillText(’Scad: ’+scad,PW-MR-170,_y+25);}
+_cx.strokeStyle=C.brd; _cx.lineWidth=0.5; ln(ML,_y+rh-2,PW-MR,_y+rh-2);
+_y+=rh;
+}
+
+// Formazione con tabella nome+data per ogni lavoratore
+function formRow(label,sub,val,scad,entries){
+// header
+const ll=wrap(label+(sub?’ — ‘+sub:’’),‘bold 12px Arial’,CW-80);
+const headerH=ll.length*16+10;
+checkY(headerH+30);
+rr(ML,_y,CW,headerH+2,3,C.sur,null);
+_cx.font=‘bold 12px Arial’; _cx.fillStyle=C.wht;
+ll.forEach((l,i)=>_cx.fillText(l,ML+8,_y+14+i*16));
+badge(val,PW-MR-60,_y+4);
+if(scad){_cx.font=‘10px Arial’;_cx.fillStyle=C.acc;_cx.fillText(’↺ ’+scad,PW-MR-130,_y+14);}
+_y+=headerH+8;
+
+// table rows
+if(entries.length===0||(entries.length===1&&!entries[0].nome&&!entries[0].data)){
+// no entries
+_cx.font=‘italic 11px Arial’; _cx.fillStyle=C.gry;
+_cx.fillText(‘Nessun lavoratore inserito’,ML+8,_y+13);
+_y+=20;
+} else {
+entries.forEach((e,i)=>{
+checkY(20);
+const rowBg=i%2===0?’#13161f’:’#111520’;
+rr(ML,_y,CW,20,0,rowBg,null);
+_cx.font=‘12px Arial’; _cx.fillStyle=C.wht;
+_cx.fillText((i+1)+’. ‘+(e.nome||’—’),ML+8,_y+14);
+if(e.data){
+_cx.font=‘11px Arial’; _cx.fillStyle=C.gry;
+_cx.fillText(fmtD(e.data),PW-MR-100,_y+14);
+}
+_y+=20;
+});
+}
+_cx.strokeStyle=C.brd; _cx.lineWidth=0.5; ln(ML,_y+2,PW-MR,_y+2);
+_y+=10;
+}
+
+function noteBlock(label,text){
+if(!text)return;
+const lines=wrap(text,‘12px Arial’,CW);
+checkY(lines.length*17+26);
+if(label){_cx.font=‘bold 10px Arial’;_cx.fillStyle=C.gry;_cx.fillText(label.toUpperCase(),ML,_y+12);_y+=18;}
+_cx.font=‘12px Arial’; _cx.fillStyle=C.wht;
+lines.forEach(l=>{checkY(17);_cx.fillText(l,ML,_y+12);_y+=17;});
+_y+=8;
+}
+
+async function buildAllPages(){
+_pages=[];
+newPage(); // cover – no header
+
+// COVER
+_cx.fillStyle=C.acc; _cx.fillRect(0,0,PW,6);
+_cx.font=‘bold 14px Arial’; _cx.fillStyle=C.acc; _cx.fillText(‘FILCAMS CGIL’,ML,44);
+_cx.font=‘11px Arial’; _cx.fillStyle=C.gry;
+_cx.fillText(‘Rappresentante dei Lavoratori per la Sicurezza Territoriale’,ML,62);
+_cx.font=‘bold 56px Arial’; _cx.fillStyle=C.wht; _cx.fillText(‘VERBALE DI’,ML,210);
+_cx.fillStyle=C.acc; _cx.fillText(‘SOPRALLUOGO’,ML,278);
+_cx.fillStyle=C.wht; _cx.fillText(‘AZIENDALE’,ML,346);
+_cx.fillStyle=C.acc; _cx.fillRect(ML,366,130,5);
+
+rr(ML,390,CW,210,8,C.blu,null);
+const info=[[‘DATA SOPRALLUOGO’,fmtD(g(‘data’))],[‘AZIENDA’,g(‘azienda’)],
+[‘SEDE LEGALE’,g(‘sedeLeg’)],[‘SEDE OPERATIVA’,g(‘sedeOp’)||g(‘sedeLeg’)],
+[‘SEDE SOPRALLUOGO’,g(‘sedeSopr’)],[‘RLST’,g(‘rlstNome’)]];
+info.forEach(([k,val],i)=>{
+_cx.font=‘10px Arial’; _cx.fillStyle=C.gry; _cx.fillText(k,ML+20,420+i*29);
+_cx.font=‘bold 13px Arial’; _cx.fillStyle=C.wht; _cx.fillText(val||’—’,ML+20+188,420+i*29);
+});
+const intro=`Il sottoscritto ${g('rlstNome')||'____________________'}, nominato RLST${g('rlstData')?' in data '+fmtD(g('rlstData')):''},  svolge il sopralluogo presso l'unità operativa sopraccitata.`;
+_cx.font=‘12px Arial’; _cx.fillStyle=C.gry;
+wrap(intro,‘12px Arial’,CW).forEach((l,i)=>_cx.fillText(l,ML,636+i*18));
+_cx.font=‘11px Arial’; _cx.fillStyle=C.gry;
+_cx.fillText(’Documento generato il ’+new Date().toLocaleDateString(‘it-IT’),ML,PH-32);
+
+// PAGE 2 — content starts
+saveAndNewPage();
+
+secHead(‘02 — Organigramma Aziendale’);
+ORG.forEach(f=>{
+const ll=wrap(f.l+(f.s?’ (’+f.s+’)’:’’),‘10px Arial’,CW-180);
+checkY(22);
+_cx.font=‘10px Arial’; _cx.fillStyle=C.gry; ll.forEach((l,i)=>_cx.fillText(l,ML,_y+12+i*14));
+_cx.font=‘bold 12px Arial’; _cx.fillStyle=C.wht;
+*cx.fillText(g(’o*’+f.id)||’—’,ML+148,_y+12);
+_y+=22;
+});
+checkY(22);
+_cx.font=‘10px Arial’; _cx.fillStyle=C.gry; _cx.fillText(‘NR. LAVORATORI TOTALI’,ML,_y+12);
+_cx.font=‘bold 12px Arial’; _cx.fillStyle=C.wht; _cx.fillText(g(‘nrLav’)||’—’,ML+148,_y+12);
+_y+=22;
+checkY(16); _cx.font=‘bold 11px Arial’; _cx.fillStyle=C.gry;
+_cx.fillText(‘CATEGORIE LAVORATORI PRESENTI’,ML,*y); *y+=20;
+WCAT.forEach(c=>{
+const on=(document.getElementById(’w*’+c.replace(/\W/g,’*’))||{}).classList?.contains(‘on’);
+sinoRow(c,on?‘SI’:‘NO’);
+});
+noteBlock(‘Note organigramma’,g(‘noteOrg’));
+
+secHead(‘03a — DVR e Valutazioni dei Rischi’);
+DVR.forEach(it=>docRow(it.l,it.r||’’,SV[it.id]||’’,fmtD(g(‘d_’+it.id)),it.sc||’’,it.s||’’));
+
+secHead(‘03b — Altra Documentazione’);
+ALTRI.forEach(it=>docRow(it.l,’’,SV[it.id]||’’,fmtD(g(‘d_’+it.id)),it.sc||’’,it.s||’’));
+
+secHead(‘03c — Nomine’);
+NOMINE.forEach(it=>sinoRow(it.l,SV[it.id]||’’));
+noteBlock(‘Note documentazione’,g(‘noteDoc’));
+
+secHead(‘04a — Gestione Emergenze’);
+EMERG.forEach(it=>sinoRow(it.l,SV[it.id]||’’,it.s||’’));
+
+secHead(‘04b — Sorveglianza Sanitaria’);
+SORV.forEach(it=>sinoRow(it.l,SV[it.id]||’’));
+noteBlock(‘Note emergenze / sorveglianza’,g(‘noteEmerg’));
+
+secHead(‘05 — Formazione / Informazione / Addestramento’);
+checkY(14); _cx.font=‘italic 11px Arial’; _cx.fillStyle=C.gry;
+_cx.fillText(‘Artt. 36–37 D.Lgs. 9 aprile 2008, n. 81 e s.m.i.’,ML,_y); _y+=18;
+const fd=getFormData();
+FORM.forEach(it=>{
+const d=fd[it.id];
+formRow(it.l,it.s||’’,d.val,it.sc||’’,d.entries);
+});
+noteBlock(‘Note formazione’,g(‘noteForm’));
+
+secHead(‘06 — Segnalazioni & Note Finali’);
+noteBlock(’’,g(‘noteFinali’)||‘Nessuna annotazione finale.’);
+sinoRow(‘Possibilità di dialogo coi lavoratori durante il sopralluogo’,dialogoVal||’’);
+noteBlock(‘Note dialogo’,g(‘noteDialogo’));
+
+// FOTO
+if(fotos.length>0){
+saveAndNewPage();
+secHead(‘06b — Documentazione Fotografica’);
+const iw=(CW-16)/2, ih=iw*0.75;
+for(let i=0;i<fotos.length;i+=2){
+checkY(ih+42);
+for(let j=0;j<2&&(i+j)<fotos.length;j++){
+const fx=ML+j*(iw+16);
+await new Promise(res=>{
+const img=new Image(); img.onload=()=>{_cx.drawImage(img,fx,_y,iw,ih);res();};
+img.onerror=res; img.src=fotos[i+j].d;
+});
+_cx.font=‘11px Arial’; _cx.fillStyle=C.gry;
+_cx.fillText(fotos[i+j].c||’Foto ’+(i+j+1),fx,_y+ih+15);
+}
+_y+=ih+30;
+}
+}
+
+// FIRME
+saveAndNewPage();
+secHead(‘07 — Sottoscrizione’);
+const chi=‘Con la sottoscrizione del presente documento, il datore di lavoro, o in sua vece un delegato, prende atto dell'avvenuta segnalazione da parte del RLST di eventuali criticità, osservazioni, necessità emerse in sede di sopralluogo.’;
+wrap(chi,‘12px Arial’,CW).forEach(l=>{checkY(18);_cx.font=‘12px Arial’;_cx.fillStyle=C.wht;_cx.fillText(l,ML,_y);_y+=18;});
+_y+=22;
+
+const fw=(CW-20)/2, fh=140;
+checkY(fh+50);
+[‘DL’,‘RLST’].forEach((id,i)=>{
+const fx=ML+i*(fw+20);
+const lbl=id===‘DL’?‘Datore di Lavoro / Delegato’:‘RLST’;
+const nome=id===‘DL’?g(‘nomeDL’):g(‘nomeRLST’);
+rr(fx,_y,fw,24,4,C.blu,null);
+_cx.font=‘bold 11px Arial’; _cx.fillStyle=C.acc; _cx.fillText(lbl.toUpperCase(),fx+10,_y+16);
+_cx.strokeStyle=C.brd; _cx.lineWidth=1; _cx.strokeRect(fx,_y+26,fw,fh);
+if(FI[id]){const sig=new Image();sig.src=FI[id];_cx.drawImage(sig,fx+4,_y+28,fw-8,fh-4);}
+_cx.font=‘11px Arial’; _cx.fillStyle=C.gry;
+_cx.fillText(nome||’____________________’,fx+6,_y+26+fh+18);
+});
+_pages.push(_cv);
+
+// page numbers (skip cover)
+_pages.forEach((pg,i)=>{
+if(i===0)return;
+const cx=pg.getContext(‘2d’);
+cx.font=‘11px Arial’; cx.fillStyle=C.gry;
+cx.fillText(’Pagina ‘+(i+1)+’ di ’+_pages.length,PW-MR-90,PH-22);
+});
+
+return _pages;
+}
+
+// ── PDF binary assembler ─────────────────────────────────────
+async function assemblePDF(pages){
+const n=pages.length;
+const W=595.28,H=841.89;
+
+const jpegs=await Promise.all(pages.map(pg=>new Promise(res=>{
+pg.toBlob(blob=>blob.arrayBuffer().then(buf=>res(new Uint8Array(buf))),‘image/jpeg’,0.88);
+})));
+
+const enc=new TextEncoder();
+const parts=[];
+let off=0;
+const xo=[];
+
+const ps=s=>{const u=enc.encode(s);parts.push(u);off+=u.length;};
+const pb=a=>{parts.push(a);off+=a.length;};
+const mk=n=>{while(xo.length<=n)xo.push(0);xo[n]=off;};
+
+const pB=3,iB=3+n,cB=3+2*n,tot=3+3*n;
+
+ps(’%PDF-1.4\n’);
+pb(new Uint8Array([37,226,227,207,211,10]));
+mk(1); ps(`1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n`);
+mk(2); ps(`2 0 obj\n<< /Type /Pages /Kids [${Array.from({length:n},(_,i)=>`${pB+i} 0 R`).join(' ')}] /Count ${n} >>\nendobj\n`);
+
+for(let i=0;i<n;i++){
+mk(pB+i);
+ps(`${pB+i} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W.toFixed(2)} ${H.toFixed(2)}]\n   /Resources << /XObject << /Im${i} ${iB+i} 0 R >> >>\n   /Contents ${cB+i} 0 R >>\nendobj\n`);
+}
+for(let i=0;i<n;i++){
+mk(iB+i);
+ps(`${iB+i} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${PW} /Height ${PH}\n   /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegs[i].length} >>\nstream\n`);
+pb(jpegs[i]);
+ps(`\nendstream\nendobj\n`);
+}
+for(let i=0;i<n;i++){
+mk(cB+i);
+const s=`q ${W.toFixed(2)} 0 0 ${H.toFixed(2)} 0 0 cm /Im${i} Do Q`;
+ps(`${cB+i} 0 obj\n<< /Length ${s.length} >>\nstream\n${s}\nendstream\nendobj\n`);
+}
+
+const xoff=off;
+ps(`xref\n0 ${tot}\n`);
+ps(`0000000000 65535 f \n`);
+for(let i=1;i<tot;i++) ps(String(xo[i]||0).padStart(10,‘0’)+’ 00000 n \n’);
+ps(`trailer\n<< /Size ${tot} /Root 1 0 R >>\nstartxref\n${xoff}\n%%EOF\n`);
+
+let total=0; for(const p of parts)total+=p.length;
+const out=new Uint8Array(total);
+let pos=0; for(const p of parts){out.set(p,pos);pos+=p.length;}
+return out;
+}
+</script>
+
+</body>
+</html>
